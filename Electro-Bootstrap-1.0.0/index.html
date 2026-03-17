@@ -10,11 +10,13 @@
 
 <style>
 
+html{
+scroll-behavior:smooth;
+}
+
 body{
 background:#f1f3f6;
 }
-
-/* Navbar */
 
 .navbar{
 background:#2874f0;
@@ -25,8 +27,15 @@ color:white;
 font-weight:bold;
 }
 
+.nav-links a{
+color:white;
+margin-right:15px;
+text-decoration:none;
+font-weight:500;
+}
+
 .search-box{
-width:50%;
+width:40%;
 }
 
 .cart-btn{
@@ -34,7 +43,26 @@ background:#ff9f00;
 border:none;
 }
 
-/* Header */
+.banner{
+background:#2874f0;
+color:white;
+padding:60px;
+text-align:center;
+border-radius:10px;
+margin-top:20px;
+animation:slideDown 1.2s ease;
+}
+
+@keyframes slideDown{
+from{
+transform:translateY(-40px);
+opacity:0;
+}
+to{
+transform:translateY(0);
+opacity:1;
+}
+}
 
 .header{
 background:white;
@@ -105,14 +133,18 @@ margin-top:40px;
 
 <body>
 
-<!-- Navbar -->
-
 <nav class="navbar navbar-expand-lg">
 <div class="container">
 
 <a class="navbar-brand">Sivaniki Electronics</a>
 
-<input class="form-control search-box" type="search" placeholder="Search products">
+<div class="nav-links">
+<a href="#home">Home</a>
+<a href="#products">Products</a>
+<a href="#contact">Contact</a>
+</div>
+
+<input class="form-control search-box" type="search" placeholder="Search products" onkeyup="searchProduct()">
 
 <button class="btn cart-btn text-white">
 🛒 Cart (<span id="cartCount">0</span>)
@@ -121,53 +153,67 @@ margin-top:40px;
 </div>
 </nav>
 
-<div class="header">
+<div class="container" id="home">
+<div class="banner">
+<h1>Welcome to Sivaniki Electronics</h1>
+<p>Best Deals on TVs, Mobiles, Laptops & Electronics</p>
+<button class="btn btn-warning">Shop Now</button>
+</div>
+</div>
 
+<div class="header">
 <h5>Your Cart</h5>
 <ul id="cartList" class="list-group"></ul>
+</div>
+
+<div class="container text-center mb-4">
+
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('all')">All</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('tv')">TV</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('watch')">Watch</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('camera')">Camera</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('speaker')">Speaker</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('fan')">Fan</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('iron')">Iron</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('laptop')">Laptop</button>
+<button class="btn btn-outline-primary m-1" onclick="filterProduct('mobile')">Mobile</button>
 
 </div>
 
-<div class="container">
+<div class="container" id="products">
 
 <!-- Row 1 -->
 
 <div class="row">
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">20% OFF</span>
-<br><br>
+<div class="product" data-category="tv">
+<span class="badge-off">20% OFF</span><br><br>
 <img src="img/tv.jpg">
 <h2>LED TV</h2>
 <p class="price"><span class="old">$60</span> $50</p>
-<p>⭐⭐⭐⭐☆</p>
 <button onclick="addCart('LED TV')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">New</span>
-<br><br>
+<div class="product" data-category="watch">
+<span class="badge-off">New</span><br><br>
 <img src="img/watch.jpg">
 <h2>Smart Watch</h2>
 <p class="price"><span class="old">$100</span> $80</p>
-<p>⭐⭐⭐⭐⭐</p>
 <button onclick="addCart('Smart Watch')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">15% OFF</span>
-<br><br>
+<div class="product" data-category="camera">
+<span class="badge-off">15% OFF</span><br><br>
 <img src="img/camera.webp">
 <h2>Digital Camera</h2>
 <p class="price"><span class="old">$150</span> $120</p>
-<p>⭐⭐⭐⭐☆</p>
 <button onclick="addCart('Digital Camera')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
@@ -180,39 +226,33 @@ margin-top:40px;
 <div class="row">
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">Sale</span>
-<br><br>
+<div class="product" data-category="speaker">
+<span class="badge-off">Sale</span><br><br>
 <img src="img/bluetooth.jpg">
 <h2>Bluetooth Speaker</h2>
 <p class="price"><span class="old">$90</span> $70</p>
-<p>⭐⭐⭐⭐⭐</p>
 <button onclick="addCart('Bluetooth Speaker')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">18% OFF</span>
-<br><br>
+<div class="product" data-category="fan">
+<span class="badge-off">18% OFF</span><br><br>
 <img src="img/fan.jpg">
 <h2>Ceiling Fan</h2>
 <p class="price"><span class="old">$80</span> $65</p>
-<p>⭐⭐⭐⭐☆</p>
 <button onclick="addCart('Ceiling Fan')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">Sale</span>
-<br><br>
+<div class="product" data-category="iron">
+<span class="badge-off">Sale</span><br><br>
 <img src="img/iron box.jpg">
 <h2>Electric Iron Box</h2>
 <p class="price"><span class="old">$40</span> $30</p>
-<p>⭐⭐⭐⭐</p>
 <button onclick="addCart('Iron Box')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
@@ -225,39 +265,33 @@ margin-top:40px;
 <div class="row">
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">New</span>
-<br><br>
+<div class="product" data-category="laptop">
+<span class="badge-off">New</span><br><br>
 <img src="img/laptop.jpg">
 <h2>Laptop</h2>
 <p class="price"><span class="old">$900</span> $750</p>
-<p>⭐⭐⭐⭐⭐</p>
 <button onclick="addCart('Laptop')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">Hot</span>
-<br><br>
+<div class="product" data-category="mobile">
+<span class="badge-off">Hot</span><br><br>
 <img src="img/ipad.webp">
 <h2>iPad Tablet</h2>
 <p class="price"><span class="old">$600</span> $520</p>
-<p>⭐⭐⭐⭐⭐</p>
 <button onclick="addCart('iPad')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4">
-<div class="product">
-<span class="badge-off">Trending</span>
-<br><br>
+<div class="product" data-category="mobile">
+<span class="badge-off">Trending</span><br><br>
 <img src="img/mobile.avif">
 <h2>Smart Mobile</h2>
 <p class="price"><span class="old">$500</span> $420</p>
-<p>⭐⭐⭐⭐☆</p>
 <button onclick="addCart('Smart Mobile')" class="btn btn-primary">Add to Cart</button>
 <button class="btn btn-success">Buy Now</button>
 </div>
@@ -267,18 +301,11 @@ margin-top:40px;
 
 </div>
 
-<div class="contact">
-
+<div class="contact" id="contact">
 <h2>Contact Us</h2>
-
-<p>If you want to order any product please contact us</p>
-
 <p>📞 Phone: +91 9942779220</p>
 <p>📧 Email: sivaniki@gmail.com</p>
 <p>📍 Location: Chennai, India</p>
-
-<button class="btn btn-warning">Contact for Order</button>
-
 </div>
 
 <script>
@@ -300,6 +327,46 @@ item.className="list-group-item";
 item.innerText = product;
 
 list.appendChild(item);
+
+}
+
+function searchProduct(){
+
+let input = document.querySelector(".search-box").value.toLowerCase();
+
+let products = document.querySelectorAll(".product");
+
+products.forEach(function(product){
+
+let name = product.querySelector("h2").innerText.toLowerCase();
+
+if(name.includes(input)){
+product.style.display="block";
+}else{
+product.style.display="none";
+}
+
+});
+
+}
+
+function filterProduct(category){
+
+let products=document.querySelectorAll(".product");
+
+products.forEach(function(product){
+
+if(category==="all"){
+product.style.display="block";
+}
+else if(product.dataset.category===category){
+product.style.display="block";
+}
+else{
+product.style.display="none";
+}
+
+});
 
 }
 
