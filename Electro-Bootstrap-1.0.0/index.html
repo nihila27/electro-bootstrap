@@ -7,8 +7,6 @@
 <title>Sivaniki Electronics</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Scroll Reveal CSS -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <style>
@@ -23,10 +21,7 @@ background-attachment:fixed;
 font-family:sans-serif;
 }
 
-/* Navbar */
-
 .navbar{background:#2874f0;}
-
 .navbar-brand{color:white;font-weight:bold;}
 
 .nav-links a{
@@ -37,8 +32,6 @@ font-weight:500;
 }
 
 .search-box{width:40%;}
-
-/* Category bar */
 
 .category-bar{
 background:white;
@@ -53,8 +46,6 @@ font-weight:500;
 cursor:pointer;
 }
 
-/* Slider */
-
 .carousel img{
 width:100%;
 height:350px;
@@ -63,17 +54,13 @@ border-radius:10px;
 background:white;
 }
 
-/* Product card */
-
 .product{
-position:relative;
 background:white;
 border-radius:10px;
 padding:15px;
 text-align:center;
 margin-bottom:25px;
 box-shadow:0 2px 10px rgba(0,0,0,0.2);
-
 height:420px;
 display:flex;
 flex-direction:column;
@@ -81,9 +68,7 @@ justify-content:space-between;
 align-items:center;
 }
 
-.product:hover{
-transform:scale(1.05);
-}
+.product:hover{transform:scale(1.05);}
 
 .product img{
 width:180px;
@@ -96,8 +81,6 @@ width:150px;
 margin-top:5px;
 }
 
-/* Discount */
-
 .discount{
 position:absolute;
 left:10px;
@@ -109,40 +92,26 @@ font-size:12px;
 border-radius:5px;
 }
 
-/* Wishlist */
-
-.wishlist{
-position:absolute;
-right:10px;
-top:10px;
-font-size:22px;
-cursor:pointer;
-color:#aaa;
-}
-
-.wishlist.active{color:red;}
-
-/* Floating cart */
+/* CART BOX */
 
 .corner-box{
 position:fixed;
 right:20px;
 top:120px;
-width:220px;
+width:240px;
 background:white;
 border-radius:10px;
 box-shadow:0 5px 20px rgba(0,0,0,0.3);
 padding:10px;
 z-index:1000;
+display:none;
 }
 
 .corner-box ul{
-max-height:120px;
+max-height:150px;
 overflow:auto;
 font-size:14px;
 }
-
-/* Contact */
 
 .contact{
 background:#172337;
@@ -151,18 +120,6 @@ padding:40px;
 text-align:center;
 margin-top:40px;
 }
-
-/* Dark mode */
-
-.dark-mode{
-background:#121212 !important;
-color:white;
-}
-
-.dark-mode .product{background:#1e1e1e;color:white;}
-.dark-mode .corner-box{background:#1e1e1e;color:white;}
-.dark-mode .category-bar{background:#222;color:white;}
-.dark-mode .contact{background:black;}
 
 </style>
 </head>
@@ -182,11 +139,9 @@ color:white;
 
 <input class="form-control search-box" placeholder="Search product" onkeyup="searchProduct()">
 
-<button class="btn btn-warning">
+<button class="btn btn-warning" onclick="toggleCart()">
 🛒 Cart (<span id="cartCount">0</span>)
 </button>
-
-<button onclick="toggleDarkMode()" class="btn btn-dark ms-2">🌙</button>
 
 </div>
 </nav>
@@ -199,15 +154,19 @@ color:white;
 <span>⌚ Watches</span>
 </div>
 
+<!-- CART BOX -->
+
 <div class="corner-box">
-<h6>🛒 Cart</h6>
+
+<h6>🛒 Cart Items</h6>
+
 <ul id="cartList" class="list-group mb-2"></ul>
 
-<h6>❤️ Wishlist</h6>
-<ul id="wishlistList" class="list-group"></ul>
+<h6>Total: $<span id="totalPrice">0</span></h6>
+
 </div>
 
-<div id="home" class="container mt-3" data-aos="fade-down">
+<div id="home" class="container mt-3">
 
 <div id="slider" class="carousel slide" data-bs-ride="carousel">
 
@@ -238,108 +197,98 @@ color:white;
 
 <div class="col-md-4" data-aos="fade-right">
 <div class="product">
-<span class="discount">20% OFF</span>
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/tv.jpg">
 <h5>LED TV</h5>
 <p>$50</p>
-<button onclick="addCart('LED TV')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('LED TV')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('LED TV',50)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('LED TV')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-left">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/watch.jpg">
 <h5>Smart Watch</h5>
 <p>$80</p>
-<button onclick="addCart('Smart Watch')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('Smart Watch')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('Smart Watch',80)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('Smart Watch')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-right">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/camera.webp">
 <h5>Digital Camera</h5>
 <p>$120</p>
-<button onclick="addCart('Camera')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('Camera')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('Camera',120)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('Camera')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-left">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/bluetooth.jpg">
 <h5>Bluetooth Speaker</h5>
 <p>$70</p>
-<button onclick="addCart('Speaker')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('Speaker')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('Speaker',70)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('Speaker')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-right">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/fan.jpg">
 <h5>Ceiling Fan</h5>
 <p>$65</p>
-<button onclick="addCart('Fan')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('Fan')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('Fan',65)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('Fan')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-left">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/iron box.jpg">
 <h5>Electric Iron</h5>
 <p>$30</p>
-<button onclick="addCart('Iron')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('Iron')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('Iron',30)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('Iron')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-right">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/laptop.jpg">
 <h5>Laptop</h5>
 <p>$750</p>
-<button onclick="addCart('Laptop')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('Laptop')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('Laptop',750)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('Laptop')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-left">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/ipad.webp">
 <h5>iPad Tablet</h5>
 <p>$520</p>
-<button onclick="addCart('iPad')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('iPad')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('iPad',520)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('iPad')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 <div class="col-md-4" data-aos="fade-right">
 <div class="product">
-<span class="wishlist" onclick="toggleWishlist(this)">❤</span>
 <img src="img/mobile.avif">
 <h5>Smart Mobile</h5>
 <p>$420</p>
-<button onclick="addCart('Mobile')" class="btn btn-primary">Add to Cart</button>
-<button onclick="orderProduct('Mobile')" class="btn btn-success">Buy Now</button>
+<button onclick="addCart('Mobile',420)" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('Mobile')" class="btn btn-success">Buy Now</button>
 </div>
 </div>
 
 </div>
 </div>
 
-<div class="contact" id="contact" data-aos="fade-up">
+<div class="contact" id="contact">
 <h2>Contact Us</h2>
 <p>📞 Phone: +91 9942779220</p>
 <p>📧 Email: sivaniki@gmail.com</p>
@@ -348,58 +297,76 @@ color:white;
 
 <script>
 
-let cart=0
-let wishlistCount=0
+let cart = 0;
+let total = 0;
 
-function addCart(product){
-cart++
-document.getElementById("cartCount").innerText=cart+wishlistCount
-let item=document.createElement("li")
-item.className="list-group-item"
-item.innerText=product
-document.getElementById("cartList").appendChild(item)
+function addCart(product,price){
+
+cart++;
+total+=price;
+
+document.getElementById("cartCount").innerText = cart;
+document.getElementById("totalPrice").innerText = total;
+
+let item=document.createElement("li");
+
+item.className="list-group-item d-flex justify-content-between align-items-center";
+
+item.innerHTML=product+" ($"+price+") <button class='btn btn-sm btn-danger'>❌</button>";
+
+item.querySelector("button").onclick=function(){
+
+item.remove();
+
+cart--;
+total-=price;
+
+document.getElementById("cartCount").innerText = cart;
+document.getElementById("totalPrice").innerText = total;
+
+};
+
+document.getElementById("cartList").appendChild(item);
+
 }
 
-function toggleWishlist(icon){
-let product=icon.parentElement.querySelector("h5").innerText
-icon.classList.toggle("active")
-if(icon.classList.contains("active")){
-wishlistCount++
-document.getElementById("cartCount").innerText=cart+wishlistCount
-let item=document.createElement("li")
-item.className="list-group-item"
-item.innerText=product
-document.getElementById("wishlistList").appendChild(item)
-}
+function buyNow(product){
+alert(product+" order placed successfully!");
 }
 
-function orderProduct(product){
-alert(product+" Order placed successfully!")
+function toggleCart(){
+
+let cartBox=document.querySelector(".corner-box");
+
+if(cartBox.style.display==="none" || cartBox.style.display===""){
+cartBox.style.display="block";
+}else{
+cartBox.style.display="none";
+}
+
 }
 
 function searchProduct(){
-let input=document.querySelector(".search-box").value.toLowerCase()
-document.querySelectorAll(".product").forEach(product=>{
-let name=product.querySelector("h5").innerText.toLowerCase()
-product.style.display=name.includes(input)?"block":"none"
-})
-}
 
-function toggleDarkMode(){
-document.body.classList.toggle("dark-mode")
+let input=document.querySelector(".search-box").value.toLowerCase();
+
+document.querySelectorAll(".product").forEach(product=>{
+
+let name=product.querySelector("h5").innerText.toLowerCase();
+
+product.style.display=name.includes(input)?"block":"none";
+
+});
+
 }
 
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <script>
-AOS.init({
-duration:1000,
-once:false
-});
+AOS.init({duration:1000});
 </script>
 
 </body>
