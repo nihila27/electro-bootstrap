@@ -1,179 +1,100 @@
-(function ($) {
-    "use strict";
+let cart = 0;
+let total = 0;
 
-    // Spinner
-    var spinner = function () {
-        setTimeout(function () {
-            if ($('#spinner').length > 0) {
-                $('#spinner').removeClass('show');
-            }
-        }, 1);
-    };
-    spinner(0);
-    
-    
-    // Initiate the wowjs
-    new WOW().init();
+let products = [
+{name:"LED TV", price:50, img:"img/tv.jpg"},
+{name:"Smart Watch", price:80, img:"img/watch.jpg"},
+{name:"Digital Camera", price:120, img:"img/camera.webp"},
+{name:"Bluetooth Speaker", price:70, img:"img/bluetooth.jpg"},
+{name:"Ceiling Fan", price:65, img:"img/fan.jpg"},
+{name:"Electric Iron", price:30, img:"img/iron box.jpg"},
+{name:"Laptop", price:750, img:"img/laptop.jpg"},
+{name:"iPad Tablet", price:520, img:"img/ipad.webp"},
+{name:"Smart Mobile", price:420, img:"img/mobile.avif"}
+];
 
+function loadProducts(){
 
-    // Sticky Navbar
-    $(window).scroll(function () {
-        if ($(this).scrollTop() > 45) {
-            $('.nav-bar').addClass('sticky-top shadow-sm');
-        } else {
-            $('.nav-bar').removeClass('sticky-top shadow-sm');
-        }
-    });
+let container = document.getElementById("productList");
 
+products.forEach((p,index)=>{
 
-    // Hero Header carousel
-    $(".header-carousel").owlCarousel({
-        items: 1,
-        autoplay: true,
-        smartSpeed: 2000,
-        center: false,
-        dots: false,
-        loop: true,
-        margin: 0,
-        nav : true,
-        navText : [
-            '<i class="bi bi-arrow-left"></i>',
-            '<i class="bi bi-arrow-right"></i>'
-        ]
-    });
+let animation = index % 2 === 0 ? "fade-right" : "fade-left";
 
+container.innerHTML += `
+<div class="col-6 col-md-4" data-aos="${animation}">
+<div class="product">
+<img src="${p.img}">
+<h5>${p.name}</h5>
+<p>$${p.price}</p>
+<button onclick="addCart('${p.name}',${p.price})" class="btn btn-primary">Add to Cart</button>
+<button onclick="buyNow('${p.name}')" class="btn btn-success">Buy Now</button>
+</div>
+</div>
+`;
 
-    // ProductList carousel
-    $(".productList-carousel").owlCarousel({
-        autoplay: true,
-        smartSpeed: 2000,
-        dots: false,
-        loop: true,
-        margin: 25,
-        nav : true,
-        navText : [
-            '<i class="fas fa-chevron-left"></i>',
-            '<i class="fas fa-chevron-right"></i>'
-        ],
-        responsiveClass: true,
-        responsive: {
-            0:{
-                items:1
-            },
-            576:{
-                items:1
-            },
-            768:{
-                items:2
-            },
-            992:{
-                items:2
-            },
-            1200:{
-                items:3
-            }
-        }
-    });
+});
 
-    // ProductList categories carousel
-    $(".productImg-carousel").owlCarousel({
-        autoplay: true,
-        smartSpeed: 1500,
-        dots: false,
-        loop: true,
-        items: 1,
-        margin: 25,
-        nav : true,
-        navText : [
-            '<i class="bi bi-arrow-left"></i>',
-            '<i class="bi bi-arrow-right"></i>'
-        ]
-    });
+}
 
+function addCart(product,price){
 
-    // Single Products carousel
-    $(".single-carousel").owlCarousel({
-        autoplay: true,
-        smartSpeed: 1500,
-        dots: true,
-        dotsData: true,
-        loop: true,
-        items: 1,
-        nav : true,
-        navText : [
-            '<i class="bi bi-arrow-left"></i>',
-            '<i class="bi bi-arrow-right"></i>'
-        ]
-    });
+cart++;
+total+=price;
 
+document.getElementById("cartCount").innerText = cart;
+document.getElementById("totalPrice").innerText = total;
 
-    // ProductList carousel
-    $(".related-carousel").owlCarousel({
-        autoplay: true,
-        smartSpeed: 1500,
-        dots: false,
-        loop: true,
-        margin: 25,
-        nav : true,
-        navText : [
-            '<i class="fas fa-chevron-left"></i>',
-            '<i class="fas fa-chevron-right"></i>'
-        ],
-        responsiveClass: true,
-        responsive: {
-            0:{
-                items:1
-            },
-            576:{
-                items:1
-            },
-            768:{
-                items:2
-            },
-            992:{
-                items:3
-            },
-            1200:{
-                items:4
-            }
-        }
-    });
+let item=document.createElement("li");
 
+item.className="list-group-item d-flex justify-content-between align-items-center";
 
+item.innerHTML=product+" ($"+price+") <button class='btn btn-sm btn-danger'>❌</button>";
 
-    // Product Quantity
-    $('.quantity button').on('click', function () {
-        var button = $(this);
-        var oldValue = button.parent().parent().find('input').val();
-        if (button.hasClass('btn-plus')) {
-            var newVal = parseFloat(oldValue) + 1;
-        } else {
-            if (oldValue > 0) {
-                var newVal = parseFloat(oldValue) - 1;
-            } else {
-                newVal = 0;
-            }
-        }
-        button.parent().parent().find('input').val(newVal);
-    });
+item.querySelector("button").onclick=function(){
 
+item.remove();
 
-    
-   // Back to top button
-   $(window).scroll(function () {
-    if ($(this).scrollTop() > 300) {
-        $('.back-to-top').fadeIn('slow');
-    } else {
-        $('.back-to-top').fadeOut('slow');
-    }
-    });
-    $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
-        return false;
-    });
+cart--;
+total-=price;
 
+document.getElementById("cartCount").innerText = cart;
+document.getElementById("totalPrice").innerText = total;
 
-   
+};
 
-})(jQuery);
+document.getElementById("cartList").appendChild(item);
 
+}
+
+function buyNow(product){
+alert(product+" order placed successfully!");
+}
+
+function toggleCart(){
+
+let cartBox=document.querySelector(".corner-box");
+
+if(cartBox.style.display==="none" || cartBox.style.display===""){
+cartBox.style.display="block";
+}else{
+cartBox.style.display="none";
+}
+
+}
+
+function searchProduct(){
+
+let input=document.querySelector(".search-box").value.toLowerCase();
+
+document.querySelectorAll("#productList > div").forEach(col=>{
+
+let text=col.innerText.toLowerCase();
+
+col.style.display=text.includes(input)?"":"none";
+
+});
+
+}
+
+loadProducts();
