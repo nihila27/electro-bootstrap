@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+
+<meta charset="UTF-8">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="p-4">
+
+<h2>🔐 Admin Login</h2>
+
+<div id="loginBox">
+<input id="adminUser" placeholder="Username" class="form-control mb-2">
+<input id="adminPass" type="password" placeholder="Password" class="form-control mb-2">
+<button class="btn btn-dark" onclick="adminLogin()">Login</button>
+</div>
+
+<div id="panel" style="display:none;">
+
+<h2 class="mt-4">📊 Dashboard</h2>
+<p>Total Products: <span id="totalProducts"></span></p>
+<p>Total Orders: <span id="totalOrders"></span></p>
+
+<hr>
+
+<h3>➕ Add / Edit Product</h3>
+
+<input id="name" placeholder="Name" class="form-control mb-2">
+<input id="price" placeholder="Price" class="form-control mb-2">
+<input id="cat" placeholder="Category" class="form-control mb-2">
+<input id="img" type="file" class="form-control mb-2">
+
+<button class="btn btn-success" onclick="addProduct()">Add Product</button>
+
+<hr>
+
+<h3>📦 Product List</h3>
+<table class="table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Price</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="list"></tbody>
+</table>
+
+<hr>
+
+<h3>📦 Orders</h3>
+<ul id="orders"></ul>
+
+</div>
+
+<script>
+
+// 🔥 DEFAULT PRODUCTS ADD PANNIYACHU
+let defaultProducts = [
+  {
+    name: "Smart Watch",
+    price: 80,
+    cat: "Watches",
+    img: "images/watch.jpg"
+  },
+  {
+    name: "Camera",
+    price: 120,
+    cat: "Camera",
+    img: "images/camera.jpg"
+  }
+];
+
+// 🔥 FIXED STORAGE LOGIC
+let products = JSON.parse(localStorage.getItem("products"));
+
+if(!products){
+  products = defaultProducts;
+  localStorage.setItem("products", JSON.stringify(products));
+}
+
+let ordersData = JSON.parse(localStorage.getItem("orders")) || [];
+
+function adminLogin(){
+if(adminUser.value==="admin" && adminPass.value==="1234"){
+loginBox.style.display="none";
+panel.style.display="block";
+load();
+}else{
+alert("Wrong admin login");
+}
+}
+
+// 📊 Dashboard
+function load(){
+totalProducts.innerText = products.length;
+totalOrders.innerText = ordersData.length;
+
+list.innerHTML="";
+products.forEach((p,i)=>{
+list.innerHTML += `
+<tr>
+<td>${p.name}</td>
+<td>$${p.price}</td>
+<td>
+<button class="btn btn-danger btn-sm" onclick="deleteProduct(${i})">Delete</button>
+<button class="btn btn-warning btn-sm" onclick="editProduct(${i})">Edit</button>
+</td>
+</tr>`;
+});
+
+orders.innerHTML="";
+ordersData.forEach((o,i)=>{
+orders.innerHTML += `<li>${o.name} - ${o.status}
+<button onclick="updateStatus(${i})">Next</button></li>`;
+});
+}
+
+// ➕ Add product with image upload
+function addProduct(){
+
+let file = img.files[0];
+let reader = new FileReader();
+
+reader.onload = function(){
+let newProduct = {
+name:name.value,
+price:price.value,
+cat:cat.value,
+img:reader.result
+};
+
+products.push(newProduct);
+localStorage.setItem("products",JSON.stringify(products));
+load();
+};
+
+if(file){
+reader.readAsDataURL(file);
+}
+}
+
+// ❌ Delete
+function deleteProduct(i){
+products.splice(i,1);
+localStorage.setItem("products",JSON.stringify(products));
+load();
+}
+
+// ✏️ Edit
+function editProduct(i){
+let p = products[i];
+name.value = p.name;
+price.value = p.price;
+cat.value = p.cat;
+deleteProduct(i);
+}
+
+// 📦 Order status update
+function updateStatus(i){
+let statusList = ["Ordered","Packed","Shipped","Delivered"];
+
+let current = statusList.indexOf(ordersData[i].status);
+ordersData[i].status = statusList[current+1] || "Delivered";
+
+localStorage.setItem("orders",JSON.stringify(ordersData));
+load();
+}
+
+</script>
+
+</body>
+</html>

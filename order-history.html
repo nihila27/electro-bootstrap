@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"> <!-- ✅ VERY IMPORTANT -->
+
+<title>Order History</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+background:#f3f3f3;
+font-family:sans-serif;
+}
+
+.box{
+background:white;
+padding:20px;
+border-radius:12px;
+margin-top:20px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+transition:0.3s;
+}
+
+.box:hover{
+transform:scale(1.02);
+}
+
+.empty{
+text-align:center;
+margin-top:50px;
+color:gray;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2 class="mt-4">📦 Order History</h2>
+
+<div id="orders"></div>
+
+</div>
+
+<script>
+
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+let container = document.getElementById("orders");
+
+// EMPTY STATE
+if(orders.length === 0){
+container.innerHTML = `
+<div class="empty">
+<h4>No orders yet 😢</h4>
+<p>Start shopping to see your orders here!</p>
+</div>
+`;
+}
+
+// SHOW ORDERS
+orders.forEach(o => {
+
+container.innerHTML += `
+<div class="box">
+
+<h5>🆔 Order ID: ${o.id}</h5>
+
+<p>📅 Date: ${o.date}</p>
+
+<p>💰 Total: <b>$${o.total}</b></p>
+
+<p>💳 Payment: ${o.payment}</p>
+
+</div>
+`;
+
+});
+
+</script>
+
+</body>
+</html>

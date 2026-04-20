@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Product Details</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{background:#f3f3f3;font-family:sans-serif;}
+
+.box{
+background:white;padding:20px;border-radius:10px;
+margin-top:40px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.main-img{
+width:300px;height:300px;object-fit:contain;
+}
+
+.review-box{
+background:#fff;padding:10px;margin-top:10px;border-radius:8px;
+}
+
+.star{
+color:gold;
+font-size:18px;
+}
+
+.magnifier{
+position:absolute;
+border:2px solid black;
+width:100px;height:100px;
+display:none;
+pointer-events:none;
+background-repeat:no-repeat;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="row box">
+
+<div class="col-md-6 text-center" style="position:relative;">
+<img id="mainImg" class="main-img">
+<div id="magnifier" class="magnifier"></div>
+</div>
+
+<div class="col-md-6">
+<h2 id="name"></h2>
+
+<p class="star">★★★★★</p>
+
+<h3 id="price"></h3>
+
+<p style="color:green;">✔ In Stock</p>
+
+<ul>
+<li>✔ High Quality Product</li>
+<li>✔ Fast Performance</li>
+<li>✔ Long Battery Life</li>
+<li>✔ 1 Year Warranty</li>
+</ul>
+
+<!-- ✅ ONLY CHANGE -->
+<button class="btn btn-primary" onclick="addToCart()">Add to Cart</button>
+<button class="btn btn-success" onclick="buyNow()">Buy Now</button>
+
+</div>
+
+</div>
+
+<!-- REVIEW -->
+<div class="box mt-4">
+
+<h4>⭐ Reviews</h4>
+<p>Average Rating: <span id="avgRating">0</span></p>
+
+<select id="ratingInput" class="form-control w-25 mb-2">
+<option value="5">★★★★★</option>
+<option value="4">★★★★</option>
+<option value="3">★★★</option>
+<option value="2">★★</option>
+<option value="1">★</option>
+</select>
+
+<textarea id="reviewText" class="form-control mb-2" placeholder="Write review..."></textarea>
+
+<input type="file" id="reviewImage" class="form-control mb-2">
+
+<button class="btn btn-dark" onclick="addReview()">Submit Review</button>
+
+<hr>
+
+<div id="reviewList"></div>
+
+</div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+
+// Firebase config
+firebase.initializeApp({
+apiKey: "AIzaSyCrqIUramuc7y_suqfiOh2qfTngziwGTzg",
+authDomain: "sivaniki-shop.firebaseapp.com",
+projectId: "sivaniki-shop"
+});
+
+const db = firebase.firestore();
+
+// PRODUCT LOAD
+let product = JSON.parse(localStorage.getItem("selectedProduct"));
+
+if(!product){
+product = {
+name:"Smart Watch",
+price:80,
+img:"https://picsum.photos/300"
+};
+}
+
+// IMAGE
+mainImg.src = product.img;
+name.innerText = product.name;
+price.innerText = "$"+product.price;
+
+
+// 🔍 ZOOM
+let img = document.getElementById("mainImg");
+let magnifier = document.getElementById("magnifier");
+
+img.addEventListener("mousemove", function(e){
+magnifier.style.display="block";
+
+let rect = img.getBoundingClientRect();
+let x = e.clientX - rect.left;
+let y = e.clientY - rect.top;
+
+magnifier.style.left = x+"px";
+magnifier.style.top = y+"px";
+
+magnifier.style.backgroundImage = `url(${img.src})`;
+magnifier.style.backgroundSize = "600px 600px";
+magnifier.style.backgroundPosition = `-${x*2}px -${y*2}px`;
+});
+
+img.addEventListener("mouseleave", ()=> magnifier.style.display="none");
+
+
+// 🔥 ADD REVIEW
+function addReview(){
+
+let text = reviewText.value;
+let rating = ratingInput.value;
+let file = reviewImage.files[0];
+
+if(text===""){
+alert("Write review ❗");
+return;
+}
+
+let reader = new FileReader();
+
+reader.onload = function(){
+
+db.collection("reviews").add({
+product:product.name,
+text:text,
+rating:parseInt(rating),
+img: reader.result || "",
+date:new Date().toLocaleString()
+})
+.then(()=>{
+alert("Review Added ✅");
+reviewText.value="";
+loadReviews();
+});
+};
+
+if(file){
+reader.readAsDataURL(file);
+}else{
+reader.onload();
+}
+}
+
+
+// 🔥 LOAD REVIEWS
+function loadReviews(){
+
+let box=reviewList;
+
+db.collection("reviews")
+.where("product","==",product.name)
+.get()
+.then(snapshot=>{
+
+box.innerHTML="";
+let total=0;
+
+snapshot.forEach(doc=>{
+let r=doc.data();
+total+=r.rating;
+
+box.innerHTML+=`
+<div class="review-box">
+<p class="star">${"★".repeat(r.rating)}</p>
+<p>${r.text}</p>
+${r.img ? `<img src="${r.img}" style="width:100px">` : ""}
+</div>
+`;
+});
+
+let avg=snapshot.size? (total/snapshot.size).toFixed(1):0;
+avgRating.innerText=avg;
+
+});
+
+}
+
+loadReviews();
+
+
+// ✅ NEW FUNCTION ONLY (NO OLD CODE CHANGE)
+function addToCart(){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+cart.push(product);
+
+localStorage.setItem("cart", JSON.stringify(cart));
+
+alert("Added to Cart ✅");
+}
+
+function buyNow(){
+
+localStorage.setItem("selectedProduct", JSON.stringify(product));
+
+window.location.href = "checkout.html";
+}
+
+</script>
+
+</body>
+</html>
