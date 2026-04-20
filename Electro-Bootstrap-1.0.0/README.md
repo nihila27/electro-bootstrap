@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Salone - Free Bootstrap 5 Business Template 
 
 - [Demo](https://themewagon.github.io/Electro-Bootstrap/)
@@ -26,7 +25,3 @@ Salone is developed by Team HTML Codex.
 - Design and Code is Copyright &copy; [HTML Codex](https://htmlcodex.com/).
 - Licensed cover under [MIT]
 - Distributed by [ThemeWagon](https://themewagon.com)
-=======
-# electro-bootstrap
-electro bootstrap
->>>>>>> ad5e468de0fb854829541cfa0afb2ac4a2c2d734
